@@ -6,83 +6,112 @@
 
 <style>
 body {
+    margin: 0;
     text-align: center;
     font-family: Arial, sans-serif;
-    background: url("https://i.imgur.com/VevEJ8Q.png") center/cover no-repeat;
+    background-color: #ffc0cb;
     overflow: hidden;
     position: relative;
 }
 
-h1 { color: #ff2e88; }
-button {
-    font-size: 22px; padding: 12px 25px;
-    margin: 15px; cursor: pointer;
-    border-radius: 10px; border: none;
-    transition: transform 0.3s;
+h1 { 
+    color: #ff2e88; 
+    position: relative;
+    z-index: 2;
 }
+
+button {
+    font-size: 22px;
+    padding: 12px 25px;
+    margin: 15px;
+    cursor: pointer;
+    border-radius: 10px;
+    border: none;
+    transition: transform 0.3s;
+    position: relative;
+    z-index: 2;
+}
+
 button:hover { transform: scale(1.1); }
+
 #yesBtn { background-color: #ff2e88; color: white; }
 #noBtn { background-color: gray; color: white; position: relative; }
 
-.heart { position: absolute; font-size: 20px; color: red; animation: fall linear infinite; }
-@keyframes fall { 0%{transform:translateY(0)}100%{transform:translateY(100vh);} }
-.confetti { position:absolute; width:10px; height:10px; animation: confettiFall 1s forwards; }
-@keyframes confettiFall {0%{opacity:1;}100%{opacity:0;transform:translateY(200px)rotate(360deg);}}
+/* Пушины как фон */
+.pusheen {
+    position: absolute;
+    width: 120px;
+    opacity: 0.9;
+    z-index: 0;
+    pointer-events: none;
+}
 
-iframe { position:absolute; bottom:0; left:0; width:100%; height:120px; border:none;}
+/* скрытый ютуб */
+iframe {
+    position: absolute;
+    bottom: -500px;
+    width: 0;
+    height: 0;
+    border: none;
+}
 </style>
 </head>
 
 <body>
-<h1>💌 Валентинка Котане🫵</h1>
-<h2>буш моей валентинкой? </h2>
+
+<h1>💌 Валентинка котане🫵</h1>
+<h2>буш моей валентинкой?</h2>
 
 <button id="yesBtn">Да</button>
 <button id="noBtn">Нет</button>
 
-<div id="result"></div>
-
-<!-- YouTube плеер I Love You So -->
+<!-- Музыка -->
 <iframe
-src="https://www.youtube.com/embed/k7kzc3Nof08?autoplay=1&loop=1&playlist=k7kzc3Nof08&controls=0&rel=0"
-allow="autoplay"></iframe>
+src="https://www.youtube.com/embed/k7kzc3Nof08?autoplay=1&loop=1&playlist=k7kzc3Nof08"
+allow="autoplay">
+</iframe>
 
 <script>
+
+// 🔥 ВСТАВЬ ПРЯМУЮ ССЫЛКУ НА ТВОЙ GIF
+const gifURL = "https://tenor.com/5tcX.gif";
+
+// создаём 12 пушинов в случайных местах
+for(let i=0;i<12;i++){
+    const img = document.createElement("img");
+    img.src = gifURL;
+    img.className = "pusheen";
+
+    img.style.top = Math.random() * window.innerHeight + "px";
+    img.style.left = Math.random() * window.innerWidth + "px";
+
+    img.style.width = (80 + Math.random()*80) + "px";
+    img.style.transform = "rotate(" + (Math.random()*360) + "deg)";
+
+    document.body.appendChild(img);
+}
+
+// кнопка Нет убегает
 let yesSize = 22;
 const yesBtn = document.getElementById("yesBtn");
 const noBtn = document.getElementById("noBtn");
 
-// Сердечки
-setInterval(() => {
-    const heart = document.createElement("div");
-    heart.className = "heart";
-    heart.style.left = Math.random() * window.innerWidth + "px";
-    document.body.appendChild(heart);
-    heart.innerHTML="❤️";
-    setTimeout(() => heart.remove(), 4000);
-}, 400);
-
 noBtn.onclick = () => {
     yesSize += 8;
     yesBtn.style.fontSize = yesSize + "px";
-    const x=Math.random()*(window.innerWidth-100), y=Math.random()*(window.innerHeight-50);
-    noBtn.style.left=x+"px"; noBtn.style.top=y+"px";
+    noBtn.style.position="absolute";
+    noBtn.style.left=Math.random()*(window.innerWidth-100)+"px";
+    noBtn.style.top=Math.random()*(window.innerHeight-50)+"px";
 };
 
+// кнопка Да
 yesBtn.onclick = () => {
     document.body.innerHTML = `
-        <h1 style="color:#ff2e88;">урооо</h1>
-        <h2>рахмет, люблю тебя, аньк</h2>
+        <h1 style="color:#ff2e88;">уроо </h1>
+        <h2>рахмет, люблю тебя, аньк 🥸❤️</h2>
     `;
-    for(let i=0;i<40;i++){
-        const c = document.createElement("div");
-        c.className="confetti";
-        c.style.left=Math.random()*window.innerWidth+"px";
-        c.style.backgroundColor=['#FF69B4','#FFC0CB','#FFD700','#FFB6C1'][Math.floor(Math.random()*4)];
-        document.body.appendChild(c);
-        setTimeout(() => c.remove(), 1200);
-    }
 };
+
 </script>
 
 </body>
