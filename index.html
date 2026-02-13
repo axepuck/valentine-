@@ -20,9 +20,8 @@ html, body {
     position: absolute;
     width: 70px;
     opacity: 0.8;
-    z-index: 1; /* выше розового фона */
+    z-index: 1;
     pointer-events: none;
-    transition: all 6s linear;
 }
 
 /* ===== СТАРТ ===== */
@@ -91,12 +90,12 @@ button {
     font-weight: bold;
 }
 
-/* Гифка строго по центру */
+/* Гифка поднята ближе к тексту */
 #finalGif {
     position: absolute;
-    top: 50%;
+    top: 35%; /* раньше было 50% */
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translateX(-50%);
 }
 
 #finalGif img {
@@ -106,7 +105,7 @@ button {
 /* ===== ИГРА ===== */
 #gameButtons {
     position: absolute;
-    bottom: 40%;
+    bottom: 15%; /* подняли выше */
     width: 100%;
 }
 
@@ -186,8 +185,8 @@ button {
 
 <div id="finalScreen">
     <div id="finalText">
-        Уроо! Рахмет ❤️<br>
-        Люблю тебя, Аньк 💕
+        уроо! рахмет <br>
+        люблю тебя, аньк 🥸❤️
     </div>
 
     <div id="finalGif">
@@ -206,17 +205,17 @@ button {
     </div>
 
     <div id="jumpText">
-        Тапните на экран, чтобы прыгать 🐱
+        тапай на экран, шобы прыгать 
     </div>
 </div>
 
 <script>
 const music = document.getElementById("bgMusic");
-
 const startScreen = document.getElementById("startScreen");
 const main = document.getElementById("main");
 const finalScreen = document.getElementById("finalScreen");
 
+/* СТАРТ */
 startScreen.onclick = () => {
     music.volume = 0.5;
     music.play().catch(()=>{});
@@ -227,6 +226,7 @@ startScreen.onclick = () => {
 
 /* ФОН ПУШИНЫ */
 const PUSHEEN_GIF="https://media.tenor.com/zPtxGi-xH6IAAAAi/pusheen-love.gif";
+
 function createPusheens(){
     for(let i=0;i<10;i++){
         const p=document.createElement("img");
@@ -238,18 +238,25 @@ function createPusheens(){
         move(p);
     }
 }
+
 function move(p){
-    setInterval(()=>{
+    const moveStep = () => {
+        p.style.transition = "all 12s linear";
         p.style.left=Math.random()*window.innerWidth+"px";
         p.style.top=Math.random()*window.innerHeight+"px";
-    },6000);
+    };
+    moveStep();
+    setInterval(moveStep, 12000);
 }
 
 /* КНОПКИ */
 const yesBtn=document.getElementById("yesBtn");
 const noBtn=document.getElementById("noBtn");
 
+let yesScale = 1;
 yesBtn.onclick=()=>{
+    yesScale += 0.1;
+    yesBtn.style.transform = `scale(${yesScale})`;
     main.style.display="none";
     finalScreen.style.display="block";
 };
