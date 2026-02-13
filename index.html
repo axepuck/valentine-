@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Валентинка</title>
+
+<style>
+body {
+    text-align: center;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to bottom, #ffe6f0, #ffccdd);
+    padding-top: 50px;
+    overflow: hidden;
+}
+
+h1 {
+    color: #ff2e88;
+}
+
+button {
+    font-size: 22px;
+    padding: 12px 25px;
+    margin: 15px;
+    cursor: pointer;
+    border-radius: 10px;
+    border: none;
+}
+
+#yesBtn {
+    background-color: #ff2e88;
+    color: white;
+}
+
+#noBtn {
+    background-color: gray;
+    color: white;
+    position: relative;
+}
+</style>
+</head>
+
+<body>
+
+<h1>💌 Валентинка от Димбаса</h1>
+<h2>буш моей валентинкой?</h2>
+
+<button id="yesBtn">Да</button>
+<button id="noBtn">Нет</button>
+
+<script>
+let yesSize = 22;
+
+const yesBtn = document.getElementById("yesBtn");
+const noBtn = document.getElementById("noBtn");
+
+noBtn.onclick = function() {
+    yesSize += 10;
+    yesBtn.style.fontSize = yesSize + "px";
+
+    const x = Math.random() * (window.innerWidth - 100);
+    const y = Math.random() * (window.innerHeight - 50);
+    noBtn.style.position = "absolute";
+    noBtn.style.left = x + "px";
+    noBtn.style.top = y + "px";
+};
+
+yesBtn.onclick = function() {
+    document.body.innerHTML = `
+        <h1 style="color:#ff2e88;">уроооо</h1>
+        <h2>рахмет, люблю тебя, аньк</h2>
+        <img src="https://media.giphy.com/media/MDJ9IbxxvDUQM/giphy.gif" width="250">
+    `;
+};
+</script>
+
+</body>
+</html>
