@@ -273,14 +273,16 @@ noBtn.onclick = () => {
     const maxY = window.innerHeight - noBtn.offsetHeight;
 
     let x, y;
+    const yesRect = yesBtn.getBoundingClientRect();
+
     do {
         x = Math.random() * maxX;
         y = Math.random() * maxY;
     } while (
-        x + noBtn.offsetWidth > yesBtn.offsetLeft &&
-        x < yesBtn.offsetLeft + yesBtn.offsetWidth &&
-        y + noBtn.offsetHeight > yesBtn.offsetTop &&
-        y < yesBtn.offsetTop + yesBtn.offsetHeight
+        x + noBtn.offsetWidth > yesRect.left &&
+        x < yesRect.right &&
+        y + noBtn.offsetHeight > yesRect.top &&
+        y < yesRect.bottom
     );
 
     noBtn.style.position = "absolute";
