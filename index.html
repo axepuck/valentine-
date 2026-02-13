@@ -153,7 +153,6 @@ button {
     bottom: 0;
     left: 40px;
     width: 50px;
-    transform: scaleX(-1);
 }
 
 .obstacle {
@@ -195,8 +194,8 @@ button {
 
 <div id="finalScreen">
     <div id="finalText">
-        уроо! спасибо большое <br>
-        люблю тебя, аньк 🤓❤️
+        уроо! рахмет <br>
+        люблю тебя, аньк 🥸❤️
     </div>
 
     <div id="finalGif">
@@ -253,13 +252,6 @@ function move(p){
     const moveStep = () => {
         const newX = Math.random() * window.innerWidth;
         const newY = Math.random() * window.innerHeight;
-
-        // зеркалим пушина по направлению движения
-        if(newX > parseFloat(p.style.left)) {
-            p.style.transform = "scaleX(1)";
-        } else {
-            p.style.transform = "scaleX(-1)";
-        }
 
         p.style.transition = "all 18s linear"; // медленнее
         p.style.left = newX + "px";
