@@ -37,7 +37,6 @@ button:hover { transform: scale(1.1); }
 #yesBtn { background-color: #ff2e88; color: white; }
 #noBtn { background-color: gray; color: white; position: relative; }
 
-/* Пушины как фон */
 .pusheen {
     position: absolute;
     width: 120px;
@@ -46,7 +45,6 @@ button:hover { transform: scale(1.1); }
     pointer-events: none;
 }
 
-/* скрытый ютуб */
 iframe {
     position: absolute;
     bottom: -500px;
@@ -65,7 +63,6 @@ iframe {
 <button id="yesBtn">Да</button>
 <button id="noBtn">Нет</button>
 
-<!-- Музыка -->
 <iframe
 src="https://www.youtube.com/embed/k7kzc3Nof08?autoplay=1&loop=1&playlist=k7kzc3Nof08"
 allow="autoplay">
@@ -73,10 +70,8 @@ allow="autoplay">
 
 <script>
 
-// 🔥 ВСТАВЬ ПРЯМУЮ ССЫЛКУ НА ТВОЙ GIF
 const gifURL = "https://media.tenor.com/zPtxGi-xH6IAAAAi/pusheen-love.gif";
 
-// создаём 12 пушинов в случайных местах
 for(let i=0;i<12;i++){
     const img = document.createElement("img");
     img.src = gifURL;
@@ -91,7 +86,6 @@ for(let i=0;i<12;i++){
     document.body.appendChild(img);
 }
 
-// кнопка Нет убегает
 let yesSize = 22;
 const yesBtn = document.getElementById("yesBtn");
 const noBtn = document.getElementById("noBtn");
@@ -104,11 +98,13 @@ noBtn.onclick = () => {
     noBtn.style.top=Math.random()*(window.innerHeight-50)+"px";
 };
 
-// кнопка Да
 yesBtn.onclick = () => {
     document.body.innerHTML = `
         <h1 style="color:#ff2e88;">уроо </h1>
         <h2>рахмет, люблю тебя, аньк 🥸❤️</h2>
+        <br>
+        <img src="https://media1.tenor.com/m/Yp0KOBZZ9RYAAAAd/%D0%BA%D0%BE%D1%82-%D0%BF%D0%BE%D1%86%D0%B5%D0%BB%D1%83%D0%B9.gif" 
+             style="width:300px;">
     `;
 };
 
