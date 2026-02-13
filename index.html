@@ -15,7 +15,6 @@ html, body {
     overflow: hidden;
 }
 
-/* ===== ПУШИНЫ ФОН ===== */
 .pusheen {
     position: absolute;
     width: 70px;
@@ -24,7 +23,6 @@ html, body {
     pointer-events: none;
 }
 
-/* ===== СТАРТ ===== */
 #startScreen {
     position: fixed;
     inset: 0;
@@ -47,7 +45,6 @@ html, body {
     100% { transform: scale(1); }
 }
 
-/* ===== ОСНОВНОЙ ЭКРАН ===== */
 #main {
     display: none;
     text-align: center;
@@ -70,7 +67,6 @@ button {
     position: relative;
 }
 
-/* ===== ФИНАЛ ===== */
 #finalScreen {
     display: none;
     position: relative;
@@ -80,7 +76,6 @@ button {
     text-align: center;
 }
 
-/* Текст */
 #finalText {
     position: absolute;
     top: 15%;
@@ -90,7 +85,6 @@ button {
     font-weight: bold;
 }
 
-/* Гифка поднята ближе к тексту и больше */
 #finalGif {
     position: absolute;
     top: 35%;
@@ -109,7 +103,6 @@ button {
     100% { transform: translateX(-50%) translateY(-10px); }
 }
 
-/* ===== ИГРА ===== */
 #gameButtons {
     position: absolute;
     bottom: 20%;
@@ -164,7 +157,6 @@ button {
     border-radius: 6px;
 }
 
-/* Текст прыжка */
 #jumpText {
     position: absolute;
     bottom: 5%;
@@ -187,7 +179,7 @@ button {
 
 <div id="main">
     <h1>💌 Валентинка котане 🫵</h1>
-    <h2>буш моей валентинкой?пж</h2>
+    <h2>буш моей валентинкой?</h2>
     <button id="yesBtn">Да</button>
     <button id="noBtn">Нет</button>
 </div>
@@ -219,86 +211,6 @@ button {
 </div>
 
 <script>
-const music = document.getElementById("bgMusic");
-const startScreen = document.getElementById("startScreen");
-const main = document.getElementById("main");
-const finalScreen = document.getElementById("finalScreen");
-
-/* СТАРТ */
-startScreen.onclick = () => {
-    music.volume = 0.5;
-    music.play().catch(()=>{});
-    startScreen.style.display = "none";
-    main.style.display = "block";
-    createPusheens();
-};
-
-/* ФОН ПУШИНЫ */
-const PUSHEEN_GIF="https://media.tenor.com/zPtxGi-xH6IAAAAi/pusheen-love.gif";
-
-function createPusheens(){
-    for(let i=0;i<10;i++){
-        const p=document.createElement("img");
-        p.src=PUSHEEN_GIF;
-        p.className="pusheen";
-        p.style.left=Math.random()*window.innerWidth+"px";
-        p.style.top=Math.random()*window.innerHeight+"px";
-        document.body.appendChild(p);
-        move(p);
-    }
-}
-
-function move(p){
-    const moveStep = () => {
-        const newX = Math.random() * window.innerWidth;
-        const newY = Math.random() * window.innerHeight;
-
-        p.style.transition = "all 18s linear"; // медленнее
-        p.style.left = newX + "px";
-        p.style.top = newY + "px";
-    };
-
-    requestAnimationFrame(moveStep); // сразу первая смена позиции
-    setInterval(moveStep, 18000); // каждые 18 секунд
-}
-
-/* КНОПКИ */
-const yesBtn=document.getElementById("yesBtn");
-const noBtn=document.getElementById("noBtn");
-
-let yesScale = 1;
-
-noBtn.onclick = () => {
-    yesScale += 0.1; // увеличиваем кнопку "Да"
-    yesBtn.style.transform = `scale(${yesScale})`;
-
-    const maxX = window.innerWidth - noBtn.offsetWidth;
-    const maxY = window.innerHeight - noBtn.offsetHeight;
-
-    let x, y;
-    const yesRect = yesBtn.getBoundingClientRect();
-
-    do {
-        x = Math.random() * maxX;
-        y = Math.random() * maxY;
-    } while (
-        x + noBtn.offsetWidth > yesRect.left &&
-        x < yesRect.right &&
-        y + noBtn.offsetHeight > yesRect.top &&
-        y < yesRect.bottom
-    );
-
-    noBtn.style.position = "absolute";
-    noBtn.style.left = x + "px";
-    noBtn.style.top = y + "px";
-};
-
-yesBtn.onclick = () => {
-    main.style.display = "none";
-    finalScreen.style.display = "block";
-};
-
-/* ИГРА */
 const startBtn=document.getElementById("startGameBtn");
 const restartBtn=document.getElementById("restartGameBtn");
 const gameContainer=document.getElementById("game-container");
@@ -311,26 +223,30 @@ let gameInterval,obstacleInterval,jumpState=false,pusheenBottom=0,speed=4;
 
 gameRecord.innerText="Рекорд: "+record;
 
+/* ✅ НОВЫЙ МГНОВЕННЫЙ ПРЫЖОК */
 function jump(){
     if(jumpState) return;
-    jumpState=true;
-    let up=0;
-    const upInterval=setInterval(()=>{
-        if(up>=80){
-            clearInterval(upInterval);
-            const downInterval=setInterval(()=>{
-                if(pusheenBottom<=0){
-                    clearInterval(downInterval);
-                    jumpState=false;
-                }
-                pusheenBottom-=5;
-                pusheen.style.bottom=pusheenBottom+"px";
-            },20);
+    jumpState = true;
+
+    let velocity = 12;
+    let gravity = 0.6;
+
+    function animate(){
+        velocity -= gravity;
+        pusheenBottom += velocity;
+
+        if(pusheenBottom <= 0){
+            pusheenBottom = 0;
+            pusheen.style.bottom = "0px";
+            jumpState = false;
+            return;
         }
-        up+=5;
-        pusheenBottom+=5;
-        pusheen.style.bottom=pusheenBottom+"px";
-    },20);
+
+        pusheen.style.bottom = pusheenBottom + "px";
+        requestAnimationFrame(animate);
+    }
+
+    requestAnimationFrame(animate);
 }
 
 startBtn.onclick=startGame;
@@ -361,16 +277,6 @@ function createObstacle(){
 
 function updateGame(){
     speed+=0.002;
-
-    // Зеркалирование игрового пушина
-    obstacles.forEach(obs => {
-        if(obs.x + obs.el.offsetWidth < pusheen.offsetLeft){
-            pusheen.style.transform = "scaleX(1)"; // смотрит вправо
-        } else {
-            pusheen.style.transform = "scaleX(-1)"; // смотрит влево
-        }
-    });
-
     for(let i=0;i<obstacles.length;i++){
         obstacles[i].x-=speed;
         obstacles[i].el.style.left=obstacles[i].x+"px";
