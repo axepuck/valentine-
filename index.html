@@ -90,27 +90,37 @@ button {
     font-weight: bold;
 }
 
-/* Гифка поднята ближе к тексту */
+/* Гифка поднята ближе к тексту и больше */
 #finalGif {
     position: absolute;
-    top: 35%; /* раньше было 50% */
+    top: 35%;
     left: 50%;
     transform: translateX(-50%);
+    animation: float 2s ease-in-out infinite alternate;
+    z-index: 3;
 }
 
 #finalGif img {
-    width: 120px;
+    width: 160px; /* увеличили */
+}
+
+@keyframes float {
+    0% { transform: translateX(-50%) translateY(0); }
+    100% { transform: translateX(-50%) translateY(-10px); }
 }
 
 /* ===== ИГРА ===== */
 #gameButtons {
     position: absolute;
-    bottom: 15%; /* подняли выше */
+    bottom: 20%; /* подняли выше, чтобы не перекрывало гифку */
     width: 100%;
+    z-index: 5;
 }
 
 #restartGameBtn {
     margin-top: 10px;
+    position: relative;
+    z-index: 6; /* выше всех элементов */
 }
 
 #game-container {
@@ -245,7 +255,7 @@ function move(p){
         p.style.left=Math.random()*window.innerWidth+"px";
         p.style.top=Math.random()*window.innerHeight+"px";
     };
-    moveStep();
+    moveStep(); // сразу движение
     setInterval(moveStep, 12000);
 }
 
@@ -254,19 +264,20 @@ const yesBtn=document.getElementById("yesBtn");
 const noBtn=document.getElementById("noBtn");
 
 let yesScale = 1;
-yesBtn.onclick=()=>{
-    yesScale += 0.1;
+noBtn.onclick = () => {
+    yesScale += 0.1; // увеличиваем кнопку "Да" при каждом нажатии "Нет"
     yesBtn.style.transform = `scale(${yesScale})`;
-    main.style.display="none";
-    finalScreen.style.display="block";
-};
 
-noBtn.onclick=()=>{
     const maxX=window.innerWidth-100;
     const maxY=window.innerHeight-60;
     noBtn.style.position="absolute";
     noBtn.style.left=Math.random()*maxX+"px";
     noBtn.style.top=Math.random()*maxY+"px";
+};
+
+yesBtn.onclick = () => {
+    main.style.display = "none";
+    finalScreen.style.display = "block";
 };
 
 /* ИГРА */
