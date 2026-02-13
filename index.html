@@ -1,21 +1,58 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Валентинка</title>
 
 <style>
-body {
+html, body {
     margin: 0;
-    text-align: center;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
     font-family: Arial, sans-serif;
     background-color: #ffc0cb;
-    overflow: hidden;
-    position: relative;
 }
 
-h1 { 
-    color: #ff2e88; 
+/* ===== СТАРТОВЫЙ ЭКРАН ===== */
+#startScreen {
+    position: fixed;
+    inset: 0;
+    background-color: #ffc0cb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    cursor: pointer;
+}
+
+#startScreen img {
+    width: 220px;
+    max-width: 80%;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.07); }
+    100% { transform: scale(1); }
+}
+
+/* ===== ОСНОВНОЙ КОНТЕНТ ===== */
+#main {
+    display: none;
+    text-align: center;
+}
+
+h1 {
+    color: #ff2e88;
+    margin-top: 30px;
+    position: relative;
+    z-index: 2;
+}
+
+h2 {
     position: relative;
     z-index: 2;
 }
@@ -32,60 +69,117 @@ button {
     z-index: 2;
 }
 
-button:hover { transform: scale(1.1); }
-
-#yesBtn { background-color: #ff2e88; color: white; }
-#noBtn { background-color: gray; color: white; position: relative; }
-
-.pusheen {
-    position: absolute;
-    width: 120px;
-    opacity: 0.9;
-    z-index: 0;
-    pointer-events: none;
+button:hover {
+    transform: scale(1.1);
 }
 
-iframe {
+#yesBtn {
+    background-color: #ff2e88;
+    color: white;
+}
+
+#noBtn {
+    background-color: gray;
+    color: white;
+}
+
+/* ===== ПУШИНЫ ===== */
+.pusheen {
     position: absolute;
-    bottom: -500px;
-    width: 0;
-    height: 0;
-    border: none;
+    width: 110px;
+    opacity: 0.95;
+    z-index: 0;
+    pointer-events: none;
+    transition: left linear, top linear;
 }
 </style>
 </head>
 
 <body>
 
-<h1>💌 Валентинка котане🫵</h1>
-<h2>буш моей валентинкой?</h2>
+<!-- ===== СТАРТОВЫЙ ЭКРАН ===== -->
+<div id="startScreen">
+    <img src="https://media.tenor.com/S_THbhLJxokAAAAj/envelope-cora%C3%A7%C3%A3o-envelope.gif">
+</div>
 
-<button id="yesBtn">Да</button>
-<button id="noBtn">Нет</button>
+<!-- ===== ОСНОВНОЙ КОНТЕНТ ===== -->
+<div id="main">
+    <h1>💌 Валентинка котане🫵</h1>
+    <h2>буш моей валентинкой?</h2>
 
-<iframe
-src="https://www.youtube.com/embed/k7kzc3Nof08?autoplay=1&loop=1&playlist=k7kzc3Nof08"
-allow="autoplay">
-</iframe>
+    <button id="yesBtn">Да</button>
+    <button id="noBtn">Нет</button>
+</div>
+
+<!-- ===== МУЗЫКА ===== -->
+<audio id="bgMusic" loop>
+    <source src="ane.m4a" type="audio/mp4">
+</audio>
 
 <script>
+/* ===== РАЗМЕРЫ ЭКРАНА ===== */
+const W = () => document.documentElement.clientWidth;
+const H = () => document.documentElement.clientHeight;
 
-const gifURL = "https://media.tenor.com/zPtxGi-xH6IAAAAi/pusheen-love.gif";
-
-for(let i=0;i<12;i++){
-    const img = document.createElement("img");
-    img.src = gifURL;
-    img.className = "pusheen";
-
-    img.style.top = Math.random() * window.innerHeight + "px";
-    img.style.left = Math.random() * window.innerWidth + "px";
-
-    img.style.width = (80 + Math.random()*80) + "px";
-    img.style.transform = "rotate(" + (Math.random()*360) + "deg)";
-
-    document.body.appendChild(img);
+/* ===== МУЗЫКА ===== */
+const music = document.getElementById("bgMusic");
+function startMusic() {
+    music.volume = 0.5;
+    music.play().catch(()=>{});
 }
 
+/* ===== СТАРТ ===== */
+const startScreen = document.getElementById("startScreen");
+const main = document.getElementById("main");
+
+startScreen.addEventListener("click", () => {
+    startMusic();
+
+    startScreen.style.opacity = "0";
+    startScreen.style.transition = "opacity 0.5s";
+
+    setTimeout(() => {
+        startScreen.style.display = "none";
+        main.style.display = "block";
+        createPusheens();
+    }, 500);
+});
+
+/* ===== ПУШИНЫ ===== */
+const PUSHEEN_GIF = "https://media.tenor.com/zPtxGi-xH6IAAAAi/pusheen-love.gif";
+const COUNT = 12;
+
+function createPusheens() {
+    for (let i = 0; i < COUNT; i++) {
+        const p = document.createElement("img");
+        p.src = PUSHEEN_GIF;
+        p.className = "pusheen";
+
+        p.style.left = Math.random() * (W() - 120) + "px";
+        p.style.top = Math.random() * (H() - 120) + "px";
+
+        document.body.appendChild(p);
+        walk(p);
+    }
+}
+
+function walk(p) {
+    const duration = 8000 + Math.random() * 5000;
+
+    let x = p.offsetLeft + (Math.random() - 0.5) * 220;
+    let y = p.offsetTop + (Math.random() - 0.5) * 160;
+
+    x = Math.max(0, Math.min(W() - 120, x));
+    y = Math.max(0, Math.min(H() - 120, y));
+
+    p.style.transitionDuration = duration + "ms";
+    p.style.left = x + "px";
+    p.style.top = y + "px";
+
+    setTimeout(() => walk(p), duration + 500);
+}
+
+/* ===== КНОПКИ ===== */
 let yesSize = 22;
 const yesBtn = document.getElementById("yesBtn");
 const noBtn = document.getElementById("noBtn");
@@ -93,21 +187,21 @@ const noBtn = document.getElementById("noBtn");
 noBtn.onclick = () => {
     yesSize += 8;
     yesBtn.style.fontSize = yesSize + "px";
-    noBtn.style.position="absolute";
-    noBtn.style.left=Math.random()*(window.innerWidth-100)+"px";
-    noBtn.style.top=Math.random()*(window.innerHeight-50)+"px";
+
+    noBtn.style.position = "absolute";
+    noBtn.style.left = Math.random() * (W() - 100) + "px";
+    noBtn.style.top = Math.random() * (H() - 50) + "px";
 };
 
 yesBtn.onclick = () => {
     document.body.innerHTML = `
-        <h1 style="color:#ff2e88;">уроо </h1>
+        <h1 style="color:#ff2e88;margin-top:40px;">уроо</h1>
         <h2>рахмет, люблю тебя, аньк 🥸❤️</h2>
         <br>
-        <img src="https://media1.tenor.com/m/Yp0KOBZZ9RYAAAAd/%D0%BA%D0%BE%D1%82-%D0%BF%D0%BE%D1%86%D0%B5%D0%BB%D1%83%D0%B9.gif" 
-             style="width:300px;">
+        <img src="https://media1.tenor.com/m/Yp0KOBZZ9RYAAAAd/%D0%BA%D0%BE%D1%82-%D0%BF%D0%BE%D1%86%D0%B5%D0%BB%D1%83%D0%B9.gif"
+             style="width:300px;max-width:90%;">
     `;
 };
-
 </script>
 
 </body>
