@@ -43,18 +43,13 @@ html, body {
 #main {
     display: none;
     text-align: center;
+    width: 100%;
+    height: 100%;
+    position: relative;
 }
 
-h1 {
+h1, h2 {
     color: #ff2e88;
-    margin-top: 30px;
-    position: relative;
-    z-index: 2;
-}
-
-h2 {
-    position: relative;
-    z-index: 2;
 }
 
 button {
@@ -65,8 +60,7 @@ button {
     border-radius: 10px;
     border: none;
     transition: transform 0.3s;
-    position: relative;
-    z-index: 2;
+    position: absolute;
 }
 
 button:hover {
@@ -76,14 +70,16 @@ button:hover {
 #yesBtn {
     background-color: #ff2e88;
     color: white;
+    z-index: 2; /* Да всегда поверх Нет */
 }
 
 #noBtn {
     background-color: gray;
     color: white;
+    z-index: 1;
 }
 
-/* ===== ПУШИНЫ ===== */
+/* ===== ПОШИНЫ ===== */
 .pusheen {
     position: absolute;
     width: 110px;
@@ -91,6 +87,31 @@ button:hover {
     z-index: 0;
     pointer-events: none;
     transition: left linear, top linear;
+}
+
+/* ===== ПОСЛЕДНЯЯ СТРАНИЦА ===== */
+#finalScreen {
+    display: none;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: #ffc0cb;
+    text-align: center;
+}
+
+#finalScreen .gif-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#finalScreen .text-bottom {
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    font-size: 24px;
+    color: #ff2e88;
 }
 </style>
 </head>
@@ -111,13 +132,21 @@ button:hover {
     <button id="noBtn">Нет</button>
 </div>
 
+<!-- ===== ПОСЛЕДНЯЯ СТРАНИЦА ===== -->
+<div id="finalScreen">
+    <div class="gif-container">
+        <img src="https://media1.tenor.com/m/Yp0KOBZZ9RYAAAAd/%D0%BA%D0%BE%D1%82-%D0%BF%D0%BE%D1%86%D0%B5%D0%BB%D1%83%D0%B9.gif"
+             style="width:300px;max-width:90%;">
+    </div>
+    <div class="text-bottom">уроо, рахмет, люблю тебя, аньк 🥸❤️</div>
+</div>
+
 <!-- ===== МУЗЫКА ===== -->
 <audio id="bgMusic" loop>
     <source src="ane.m4a" type="audio/mp4">
 </audio>
 
 <script>
-/* ===== РАЗМЕРЫ ЭКРАНА ===== */
 const W = () => document.documentElement.clientWidth;
 const H = () => document.documentElement.clientHeight;
 
@@ -131,21 +160,21 @@ function startMusic() {
 /* ===== СТАРТ ===== */
 const startScreen = document.getElementById("startScreen");
 const main = document.getElementById("main");
+const finalScreen = document.getElementById("finalScreen");
 
 startScreen.addEventListener("click", () => {
     startMusic();
-
     startScreen.style.opacity = "0";
     startScreen.style.transition = "opacity 0.5s";
-
     setTimeout(() => {
         startScreen.style.display = "none";
         main.style.display = "block";
         createPusheens();
+        positionButtons();
     }, 500);
 });
 
-/* ===== ПУШИНЫ ===== */
+/* ===== ПОШИНЫ ===== */
 const PUSHEEN_GIF = "https://media.tenor.com/zPtxGi-xH6IAAAAi/pusheen-love.gif";
 const COUNT = 12;
 
@@ -154,10 +183,8 @@ function createPusheens() {
         const p = document.createElement("img");
         p.src = PUSHEEN_GIF;
         p.className = "pusheen";
-
         p.style.left = Math.random() * (W() - 120) + "px";
         p.style.top = Math.random() * (H() - 120) + "px";
-
         document.body.appendChild(p);
         walk(p);
     }
@@ -165,17 +192,13 @@ function createPusheens() {
 
 function walk(p) {
     const duration = 8000 + Math.random() * 5000;
-
     let x = p.offsetLeft + (Math.random() - 0.5) * 220;
     let y = p.offsetTop + (Math.random() - 0.5) * 160;
-
     x = Math.max(0, Math.min(W() - 120, x));
     y = Math.max(0, Math.min(H() - 120, y));
-
     p.style.transitionDuration = duration + "ms";
     p.style.left = x + "px";
     p.style.top = y + "px";
-
     setTimeout(() => walk(p), duration + 500);
 }
 
@@ -184,23 +207,25 @@ let yesSize = 22;
 const yesBtn = document.getElementById("yesBtn");
 const noBtn = document.getElementById("noBtn");
 
+/* Задаём стартовые позиции кнопок */
+function positionButtons() {
+    yesBtn.style.left = W()/2 - 120 + "px";
+    yesBtn.style.top = H()/2 + "px";
+    noBtn.style.left = W()/2 + 20 + "px";
+    noBtn.style.top = H()/2 + "px";
+}
+
 noBtn.onclick = () => {
     yesSize += 8;
     yesBtn.style.fontSize = yesSize + "px";
 
-    noBtn.style.position = "absolute";
     noBtn.style.left = Math.random() * (W() - 100) + "px";
     noBtn.style.top = Math.random() * (H() - 50) + "px";
 };
 
 yesBtn.onclick = () => {
-    document.body.innerHTML = `
-        <h1 style="color:#ff2e88;margin-top:40px;">уроо</h1>
-        <h2>рахмет, люблю тебя, аньк 🥸❤️</h2>
-        <br>
-        <img src="https://media1.tenor.com/m/Yp0KOBZZ9RYAAAAd/%D0%BA%D0%BE%D1%82-%D0%BF%D0%BE%D1%86%D0%B5%D0%BB%D1%83%D0%B9.gif"
-             style="width:300px;max-width:90%;">
-    `;
+    main.style.display = "none";
+    finalScreen.style.display = "block";
 };
 </script>
 
