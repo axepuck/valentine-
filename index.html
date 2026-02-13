@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Валентинка</title>
+<title>Валентинка с пушином</title>
 
 <style>
 html, body {
@@ -96,9 +96,9 @@ button:hover {
     position: relative;
     width: 100%;
     height: 100%;
-    background-color: #ffc0cb;
     text-align: center;
     z-index: 1; /* поверх пушинов */
+    background-color: transparent; /* прозрачный фон */
 }
 
 #finalScreen .text-center {
@@ -111,11 +111,48 @@ button:hover {
 
 #finalScreen .gif-container {
     position: absolute;
-    top: 50%; /* сразу под текст */
+    top: 50%; /* сразу под текстом */
     left: 50%;
-    transform: translate(-50%, -40%); /* чуть выше, чтобы отступ был */
+    transform: translate(-50%, -40%);
     width: 300px;
     max-width: 80%;
+}
+
+/* ===== ИГРА ===== */
+#game {
+    position: relative;
+    width: 80%;
+    height: 150px;
+    margin: 20px auto 0 auto;
+    background-color: transparent; /* прозрачный фон */
+    overflow: hidden;
+    border-top: 2px solid #ff2e88;
+    border-bottom: 2px solid #ff2e88;
+    border-radius: 10px;
+}
+
+#pusheen-game {
+    position: absolute;
+    bottom: 0;
+    left: 50px;
+    width: 60px;
+    transition: bottom 0.2s;
+}
+
+.obstacle {
+    position: absolute;
+    bottom: 0;
+    width: 40px;
+    height: 60px;
+    background-color: #ff2e88;
+}
+
+#ground {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 10px;
+    background-color: #ff2e88;
 }
 </style>
 </head>
@@ -138,10 +175,18 @@ button:hover {
 
 <!-- ===== ПОСЛЕДНЯЯ СТРАНИЦА ===== -->
 <div id="finalScreen">
-    <div class="text-center">уроо! рахмет, люблю тебя, аньк 🥸❤️</div>
+    <div class="text-center">Уроо! Рахмет, люблю тебя, Аньк 🥸❤️</div>
     <div class="gif-container">
         <img src="https://media1.tenor.com/m/Yp0KOBZZ9RYAAAAd/%D0%BA%D0%BE%D1%82-%D0%BF%D0%BE%D1%86%D0%B5%D0%BB%D1%83%D0%B9.gif">
     </div>
+
+    <!-- ===== МИНИ-ИГРА ===== -->
+    <div id="game">
+        <img id="pusheen-game" src="https://media.tenor.com/9HMzOjXLdesAAAAi/ravenclaw-ravenclaw-cat.gif">
+        <div id="ground"></div>
+    </div>
+
+    <p style="text-align:center; font-size:14px;">Тапните по игре для прыжка 🐱</p>
 </div>
 
 <!-- ===== МУЗЫКА ===== -->
@@ -150,6 +195,7 @@ button:hover {
 </audio>
 
 <script>
+/* ===== РАЗМЕРЫ ЭКРАНА ===== */
 const W = () => document.documentElement.clientWidth;
 const H = () => document.documentElement.clientHeight;
 
@@ -177,7 +223,7 @@ startScreen.addEventListener("click", () => {
     }, 500);
 });
 
-/* ===== ПОШИНЫ ===== */
+/* ===== ПУШИНЫ ===== */
 const PUSHEEN_GIF = "https://media.tenor.com/zPtxGi-xH6IAAAAi/pusheen-love.gif";
 const COUNT = 12;
 
@@ -210,7 +256,6 @@ let yesSize = 22;
 const yesBtn = document.getElementById("yesBtn");
 const noBtn = document.getElementById("noBtn");
 
-/* Задаём стартовые позиции кнопок */
 function positionButtons() {
     yesBtn.style.left = W()/2 - 120 + "px";
     yesBtn.style.top = H()/2 + "px";
@@ -230,6 +275,66 @@ yesBtn.onclick = () => {
     main.style.display = "none";
     finalScreen.style.display = "block";
 };
+
+/* ===== МИНИ-ИГРА ПОД ГИФКОЙ ===== */
+const pusheenGame = document.getElementById('pusheen-game');
+const game = document.getElementById('game');
+
+let isJumping = false;
+let pusheenBottom = 0;
+
+// Создание препятствий
+function createObstacle() {
+    const obstacle = document.createElement('div');
+    obstacle.classList.add('obstacle');
+    game.appendChild(obstacle);
+    let obstacleLeft = game.offsetWidth;
+
+    const timerId = setInterval(() => {
+        obstacleLeft -= 10;
+        obstacle.style.left = obstacleLeft + 'px';
+
+        if(obstacleLeft > 50 && obstacleLeft < 110 && pusheenBottom < 60) {
+            alert('Proeb😔');
+            location.reload();
+        }
+
+        if(obstacleLeft < -40) {
+            clearInterval(timerId);
+            game.removeChild(obstacle);
+        }
+    }, 20);
+
+    setTimeout(createObstacle, Math.random() * 2000 + 1500);
+}
+
+// Прыжок
+function jump() {
+    if(isJumping) return;
+    isJumping = true;
+    let upInterval = setInterval(() => {
+        if(pusheenBottom >= 100){
+            clearInterval(upInterval);
+            let downInterval = setInterval(() => {
+                if(pusheenBottom <= 0){
+                    clearInterval(downInterval);
+                    isJumping = false;
+                }
+                pusheenBottom -= 10;
+                pusheenGame.style.bottom = pusheenBottom + 'px';
+            }, 20);
+        }
+        pusheenBottom += 10;
+        pusheenGame.style.bottom = pusheenBottom + 'px';
+    }, 20);
+}
+
+// Управление через тап/клик
+game.addEventListener('click', jump);
+game.addEventListener('touchstart', jump);
+
+// Старт игры
+createObstacle();
 </script>
 
 </body>
