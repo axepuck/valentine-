@@ -187,7 +187,7 @@ button {
 
 <div id="main">
     <h1>💌 Валентинка котане 🫵</h1>
-    <h2>буш моей валентинкой?</h2>
+    <h2>буш моей валентинкой?пж</h2>
     <button id="yesBtn">Да</button>
     <button id="noBtn">Нет</button>
 </div>
@@ -361,6 +361,16 @@ function createObstacle(){
 
 function updateGame(){
     speed+=0.002;
+
+    // Зеркалирование игрового пушина
+    obstacles.forEach(obs => {
+        if(obs.x + obs.el.offsetWidth < pusheen.offsetLeft){
+            pusheen.style.transform = "scaleX(1)"; // смотрит вправо
+        } else {
+            pusheen.style.transform = "scaleX(-1)"; // смотрит влево
+        }
+    });
+
     for(let i=0;i<obstacles.length;i++){
         obstacles[i].x-=speed;
         obstacles[i].el.style.left=obstacles[i].x+"px";
