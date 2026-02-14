@@ -140,16 +140,14 @@ button {
     bottom: 0;
     left: 40px;
     width: 50px;
-    transform: scaleX(-1); /* ← ОТЗЕРКАЛЕН */
+    transform: scaleX(-1);
 }
 
-.obstacle {
+/* ❤️ Сердечки */
+.heart {
     position: absolute;
     bottom: 0;
-    width: 30px;
-    height: 30px;
-    background-color: #ff2e88;
-    border-radius: 6px;
+    font-size: 26px;
 }
 </style>
 </head>
@@ -157,6 +155,11 @@ button {
 
 <audio id="bgMusic" loop>
     <source src="ane.m4a" type="audio/mp4">
+</audio>
+
+<!-- Милый звук прыжка -->
+<audio id="jumpSound">
+    <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_5b6c1d4e63.mp3?filename=cute-level-up-2-189853.mp3" type="audio/mpeg">
 </audio>
 
 <div id="startScreen">
@@ -177,7 +180,7 @@ button {
     </div>
 
     <div id="finalGif">
-        <img src="https://media1.tenor.com/m/Yp0KOBZZ9RYAAAAd/%D0%BA%D0%BE%D1%82-%D0%BF%D0%BE%D1%86%D0%B5%D0%BB%D1%83%D0%B9.gif">
+        <img src="https://media.tenor.com/zPtxGi-xH6IAAAAi/pusheen-love.gif">
     </div>
 
     <div id="gameButtons">
@@ -194,19 +197,12 @@ button {
 
 <script>
 const music = document.getElementById("bgMusic");
+const jumpSound = document.getElementById("jumpSound");
 const startScreen = document.getElementById("startScreen");
 const main = document.getElementById("main");
 const finalScreen = document.getElementById("finalScreen");
 
-startScreen.onclick = () => {
-    music.volume = 0.5;
-    music.play().catch(()=>{});
-    startScreen.style.display = "none";
-    main.style.display = "block";
-    createPusheens();
-};
-
-/* Фоновые пушины — двигаются сразу */
+/* Фоновые пушины */
 const PUSHEEN_GIF="https://media.tenor.com/zPtxGi-xH6IAAAAi/pusheen-love.gif";
 
 function createPusheens(){
@@ -225,17 +221,24 @@ function animatePusheen(p){
     function move(){
         const newX=Math.random()*window.innerWidth;
         const newY=Math.random()*window.innerHeight;
-
         p.style.transition="all 8s linear";
         p.style.left=newX+"px";
         p.style.top=newY+"px";
     }
-
-    move(); // ← СРАЗУ начинают движение
+    move();
     setInterval(move,8000);
 }
 
-/* Остальной код игры НЕ ТРОГАЛ */
+createPusheens();
+
+startScreen.onclick = () => {
+    music.volume = 0.5;
+    music.play().catch(()=>{});
+    startScreen.style.display = "none";
+    main.style.display = "block";
+};
+
+/* Кнопки */
 const yesBtn=document.getElementById("yesBtn");
 const noBtn=document.getElementById("noBtn");
 
@@ -244,7 +247,6 @@ let yesScale=1;
 noBtn.onclick=()=>{
     yesScale+=0.1;
     yesBtn.style.transform=`scale(${yesScale})`;
-
     noBtn.style.position="absolute";
     noBtn.style.left=Math.random()*(window.innerWidth-100)+"px";
     noBtn.style.top=Math.random()*(window.innerHeight-50)+"px";
@@ -254,6 +256,105 @@ yesBtn.onclick=()=>{
     main.style.display="none";
     finalScreen.style.display="block";
 };
+
+/* ===== ИГРА ===== */
+const startGameBtn = document.getElementById("startGameBtn");
+const restartGameBtn = document.getElementById("restartGameBtn");
+const gameContainer = document.getElementById("game-container");
+const pusheenGame = document.getElementById("pusheen-game");
+const gameScore = document.getElementById("gameScore");
+const gameRecord = document.getElementById("gameRecord");
+
+let isGameRunning = false;
+let score = 0;
+let record = localStorage.getItem("pusheenRecord") || 0;
+let isJumping = false;
+
+gameRecord.textContent = "Рекорд: " + record;
+
+startGameBtn.onclick = () => {
+    if (isGameRunning) return;
+    isGameRunning = true;
+    score = 0;
+    gameScore.textContent = "Счёт: 0";
+    gameContainer.style.display = "block";
+    restartGameBtn.style.display = "none";
+    startGameBtn.style.display = "none";
+    spawnHeart();
+};
+
+function spawnHeart(){
+    if (!isGameRunning) return;
+
+    const heart = document.createElement("div");
+    heart.className = "heart";
+    heart.textContent = "❤️";
+    gameContainer.appendChild(heart);
+
+    let heartX = gameContainer.offsetWidth;
+
+    const moveInterval = setInterval(() => {
+        heartX -= 5;
+        heart.style.left = heartX + "px";
+
+        const pusheenRect = pusheenGame.getBoundingClientRect();
+        const heartRect = heart.getBoundingClientRect();
+
+        if (
+            pusheenRect.right > heartRect.left &&
+            pusheenRect.left < heartRect.right &&
+            pusheenRect.bottom > heartRect.top
+        ) {
+            endGame();
+        }
+
+        if (heartX < -30){
+            clearInterval(moveInterval);
+            heart.remove();
+            score++;
+            gameScore.textContent = "Счёт: " + score;
+
+            if (score > record){
+                record = score;
+                localStorage.setItem("pusheenRecord", record);
+                gameRecord.textContent = "Рекорд: " + record;
+            }
+
+            setTimeout(spawnHeart, 900);
+        }
+
+    }, 20);
+}
+
+function endGame(){
+    isGameRunning = false;
+    restartGameBtn.style.display = "inline-block";
+}
+
+/* Прыжок */
+function jump(){
+    if (isJumping || !isGameRunning) return;
+    isJumping = true;
+
+    jumpSound.currentTime = 0;
+    jumpSound.play().catch(()=>{});
+
+    pusheenGame.style.transition="bottom 0.25s";
+    pusheenGame.style.bottom="70px";
+
+    setTimeout(()=>{
+        pusheenGame.style.bottom="0px";
+        setTimeout(()=>{ isJumping=false; },250);
+    },250);
+}
+
+document.addEventListener("keydown",(e)=>{
+    if(e.code==="Space") jump();
+});
+
+gameContainer.addEventListener("touchstart", jump);
+gameContainer.addEventListener("click", jump);
+
 </script>
 
 </body>
