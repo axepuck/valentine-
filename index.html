@@ -169,25 +169,10 @@ button {
 </head>
 <body>
 
-<audio id="bgMusic" loop>
-    <source src="ane.m4a" type="audio/mp4">
-</audio>
-
-<div id="startScreen">
-    <img src="https://media.tenor.com/S_THbhLJxokAAAAj/envelope-cora%C3%A7%C3%A3o-envelope.gif">
-</div>
-
-<div id="main">
-    <h1>💌 Валентинка котане 🫵</h1>
-    <h2>буш моей валентинкой?</h2>
-    <button id="yesBtn">Да</button>
-    <button id="noBtn">Нет</button>
-</div>
-
 <div id="finalScreen">
     <div id="finalText">
-        уроо! спасибо большое <br>
-        люблю тебя, аньк 🤓❤️
+        уроо! рахмет <br>
+        люблю тебя, аньк 🥸❤️
     </div>
 
     <div id="finalGif">
@@ -195,7 +180,7 @@ button {
     </div>
 
     <div id="gameButtons">
-        <button id="startGameBtn">играть</button><br>
+        <button id="startGameBtn">Погнали</button><br>
         <button id="restartGameBtn" style="display:none;">Рестарт</button>
     </div>
 
@@ -223,30 +208,27 @@ let gameInterval,obstacleInterval,jumpState=false,pusheenBottom=0,speed=4;
 
 gameRecord.innerText="Рекорд: "+record;
 
-/* ✅ НОВЫЙ МГНОВЕННЫЙ ПРЫЖОК */
+/* 🔁 СТАРЫЙ ПРЫЖОК КАК БЫЛ */
 function jump(){
     if(jumpState) return;
-    jumpState = true;
-
-    let velocity = 12;
-    let gravity = 0.6;
-
-    function animate(){
-        velocity -= gravity;
-        pusheenBottom += velocity;
-
-        if(pusheenBottom <= 0){
-            pusheenBottom = 0;
-            pusheen.style.bottom = "0px";
-            jumpState = false;
-            return;
+    jumpState=true;
+    let up=0;
+    const upInterval=setInterval(()=>{
+        if(up>=80){
+            clearInterval(upInterval);
+            const downInterval=setInterval(()=>{
+                if(pusheenBottom<=0){
+                    clearInterval(downInterval);
+                    jumpState=false;
+                }
+                pusheenBottom-=5;
+                pusheen.style.bottom=pusheenBottom+"px";
+            },20);
         }
-
-        pusheen.style.bottom = pusheenBottom + "px";
-        requestAnimationFrame(animate);
-    }
-
-    requestAnimationFrame(animate);
+        up+=5;
+        pusheenBottom+=5;
+        pusheen.style.bottom=pusheenBottom+"px";
+    },20);
 }
 
 startBtn.onclick=startGame;
